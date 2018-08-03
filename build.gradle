@@ -3,6 +3,8 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.2.60'
 }
 
+defaultTasks 'clean', 'build'
+
 group 'fi.mavi.prekladaciasistent'
 version '1.0-SNAPSHOT'
 
@@ -25,3 +27,11 @@ compileKotlin {
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
+
+task zip(type: Zip) {
+    from configurations.runtime.allArtifacts.files
+    from configurations.runtime
+    from 'src/main/scripts'
+}
+
+build.dependsOn zip

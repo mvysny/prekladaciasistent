@@ -1,0 +1,3 @@
+#!/bin/bash
+set -e -o pipefail
+java -cp `ls *.jar|tr '[:space:]' ':'` fi.mavi.MainKt "$@"
