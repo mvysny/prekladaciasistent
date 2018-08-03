@@ -61,7 +61,7 @@ fun searchFor(luceneQuery: String) {
 }
 
 fun index(csvFile: File) {
-    csvFile.deleteRecursively()
+    luceneDir.deleteRecursively()
     require(csvFile.exists()) { "$csvFile does not exist" }
     println("Indexing $csvFile")
     useLucene { lucene ->
