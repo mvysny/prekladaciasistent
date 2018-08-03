@@ -53,7 +53,7 @@ fun searchFor(luceneQuery: String) {
             IndexSearcher(indexReader).use { searcher ->
                 val docs: TopDocs = searcher.search(parsedQuery, 100)
                 docs.scoreDocs.asSequence().map { searcher.doc(it.doc) } .forEach { doc ->
-                    println(doc.getField("row"))
+                    println(doc.get("row"))
                 }
             }
         }
@@ -61,7 +61,9 @@ fun searchFor(luceneQuery: String) {
 }
 
 fun index(csvFile: File) {
+    csvFile.deleteRecursively()
     require(csvFile.exists()) { "$csvFile does not exist" }
+    println("Indexing $csvFile")
     useLucene { lucene ->
         StandardAnalyzer(Version.LUCENE_30).use { analyzer ->
             IndexWriter(lucene, IndexWriterConfig(Version.LUCENE_30, analyzer).setOpenMode(IndexWriterConfig.OpenMode.CREATE)).use { luceneWriter ->
@@ -69,7 +71,7 @@ fun index(csvFile: File) {
                     parser.forEach { record: CSVRecord ->
                         val doc = Document()
                         doc.add(Field("index", record.joinToString(" "), Field.Store.NO, Field.Index.ANALYZED))
-                        doc.add(Field("row", record.joinToString(" | "), Field.Store.YES, Field.Index.NOT_ANALYZED))
+                        doc.add(Field("row", record.joinToString(" | "), Field.Store.YES, Field.Index.NO))
                         luceneWriter.addDocument(doc)
                     }
                 }
